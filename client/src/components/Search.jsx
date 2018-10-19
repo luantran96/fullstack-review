@@ -12,23 +12,10 @@ class Search extends React.Component {
     this.search = this.search.bind(this);
   }
 
-  onChange (e,cb) {
-
-    var searchValue = e.target.value;
-
-    $.ajax({
-      url: '/repos',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ searchValue: searchValue})
-    })
-    .done ((res) => {
-      console.log(res);
+  onChange (e) {
       this.setState({
-        term: searchValue
+        term: e.target.value
       });
-    });
-
   }
 
   search() {

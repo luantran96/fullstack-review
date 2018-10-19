@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const github = require('./../helpers/github');
 
 let app = express();
 
@@ -14,6 +15,9 @@ app.post('/repos', function (req, res) {
   // save the repo information in the database
 
   console.log(req.body);
+  const {term} = req.body;
+
+  github.getReposByUsername(term);
   res.end('OK');
 });
 
