@@ -28,7 +28,9 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
-
+	db.fetch((users) => {
+ 		 res.json(users);
+ 	});
 });
 
 let port = 1128;
@@ -37,3 +39,8 @@ app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
 
+app.get('/reset', function (req, res) {
+
+	db.reset();
+	res.end('Reset db');
+});

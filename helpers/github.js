@@ -23,7 +23,6 @@ let getReposByUsername = (term, cb) => {
     console.log('statusCode:', res && res.statusCode); 
     cb(JSON.parse(body));
   });
-
 }
 
 module.exports.getReposByUsername = getReposByUsername;
