@@ -33,27 +33,32 @@ let save = (repos) => {
 
   console.log('repos in save:', repos); 
 
-  
+  let reposList = [];
 
   repos.forEach( (repo) => {
 
     let {id, name, created_at, pushed_at, size, forks_count, default_branch} = repo;
     let repo_html_url = repo.html_url;
-    
+
     let {login, html_url} = repo.owner;
 
-    let currentRepo = new Repo( {login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url});
+    //let currentRepo = new Repo( {login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url});
 
     Repo.find({id}, (err, results) => {
       if (!results.length) {
-        currentRepo.save( (err, currentRepo) => {
-        if (err) throw (err);
-        }); 
+
+        // currentRepo.save( (err, currentRepo) => {
+        // if (err) throw (err);
+        // }); 
+
+        Repo.create({login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url}, (err, currentRepo) =>{
+          if (err) throw err;
+        });
+
       }
     });
 
-  });
-
+   });
 }
 
 let fetch = (cb) => {

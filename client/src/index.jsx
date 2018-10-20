@@ -45,12 +45,14 @@ class App extends React.Component {
     })
     .then ((res) => {
       console.log(res);
+
+
       this.fetchData();
     });
   }
 
   createList() {
-    
+
     var list = [];
     this.state.repos.forEach( (repo) => {
             list.push(<RepoListEntry repo ={repo} />);
