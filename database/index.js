@@ -3,68 +3,75 @@ mongoose.connect('mongodb://localhost/fetcher');
 
 
 let repoSchema = mongoose.Schema({
+  login: String,
   // id
   id: Number,
   // login
-  login: String,
+  name: String,
   // followers # 
-  followers: Number,
+  created_at: String,
   // following #
-  following: Number,
+  pushed_at: String,
   // avatar url
-  avatar_url: String,
+  size: Number,
   // total_private_repos 
-  total_private_repos: Number,
+  forks_count: Number,
   // repos #
-  public_repos: Number
+  default_branch: String,
+  // html url
+  html_url: String,
+  // Repo html url
+  repo_html_url: String
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (userInfo) => {
+let save = (repos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
-  console.log('userInfo in save:', userInfo); 
 
-  const {id, login, followers, following, total_private_repos, avatar_url, public_repos} = userInfo;
+  console.log('repos in save:', repos); 
 
-  let currentUser = new Repo( {id, login,followers, following, total_private_repos, public_repos, avatar_url});
+  
 
-	Repo.find({id}, (err, results) => {
-		console.log('results in .find:\n',results);
-		if (!results.length) {
-		  console.log('\nUser doesnt exists!\n');
-		  currentUser.save( (err, currentUser) => {
-			if (err) throw (err);
-			console.log('currentUser in save():\n',currentUser);
-		  });
-		}
-	});
+  repos.forEach( (repo) => {
+
+    let {id, name, created_at, pushed_at, size, forks_count, default_branch} = repo;
+    let repo_html_url = repo.html_url;
+    
+    let {login, html_url} = repo.owner;
+
+    let currentRepo = new Repo( {login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url});
+
+    Repo.find({id}, (err, results) => {
+      if (!results.length) {
+        currentRepo.save( (err, currentRepo) => {
+        if (err) throw (err);
+        }); 
+      }
+    });
+
+  });
+
 }
 
 let fetch = (cb) => {
-	// Repo.find({}, (err, users) => {
-	// var results = [];
-	// 	users.forEach( (user) => {
-	// 		var obj = { id: user.id, public_repos: user.public_repos };
-	// 		results.push(obj);
-	// 	});
-	// 	cb(results);
-	// });
-
   Repo.find({})
   .limit(25)
-  .sort('-public_repos')  // or .sort({public_repos: -1})
-  .exec( (err, users) => {
-    console.log(users);
-    cb(users);
+  .sort('-size')  // or .sort({size: -1})
+  .exec( (err, repos) => {
+    console.log('repos in fetch:',repos);
+    cb(repos);
   });
 
 }
 
 let reset = () => {
-	mongoose.deleteModel('User');
+	Repo.deleteMany({},(err) =>{
+    if (err) throw err;
+    console.log('DONE');
+  });
 }
 
 module.exports.save = save;

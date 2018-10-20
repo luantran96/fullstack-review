@@ -18,10 +18,29 @@ let getReposByUsername = (term, cb) => {
     }
   };  
 
-  request(options, (err,res,body) => {
+  request(options, (err, res, body) => {
     console.log('error:', err); 
     console.log('statusCode:', res && res.statusCode); 
-    cb(JSON.parse(body));
+
+    let result = JSON.parse(body);
+
+    if (res.statusCode !== 404) {
+      let repo_url = result.repos_url;
+      request({
+        url: repo_url,
+        headers: {
+          'User-Agent': 'request',
+          'Authorization': `token ${config.TOKEN}`
+        }     
+      }, (err, res, body) => {
+
+        cb(JSON.parse(body));
+      });
+
+    } else {
+      console.log('User doesnt exist!');
+    }
+
   });
 }
 

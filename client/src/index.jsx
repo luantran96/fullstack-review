@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
+import RepoListEntry from './components/RepoListEntry.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -11,11 +12,12 @@ class App extends React.Component {
       repos: []
     }
 
+    this.fetchData = this.fetchData.bind(this);
+    this.createList = this.createList.bind(this);
+
   }
 
-  componentDidMount() {
-    console.log('IN HERE');
-
+  fetchData() {
     $.ajax({
       url: '/repos',
       method: 'GET',
@@ -23,22 +25,38 @@ class App extends React.Component {
     })
     .done( (res) => {
       console.log('res in get /repos:\n\n',res);
+        this.setState({
+          repos: res
+        });
     });
+  }
 
+  componentDidMount() {
+    this.fetchData();
   }
 
   search (term) {
     console.log(`${term} was searched`);
-
     $.ajax({
       url: '/repos',
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ term: term})
     })
-    .done ((res) => {
+    .then ((res) => {
       console.log(res);
+      this.fetchData();
     });
+  }
+
+  createList() {
+    
+    var list = [];
+    this.state.repos.forEach( (repo) => {
+            list.push(<RepoListEntry repo ={repo} />);
+          });
+
+    return list;
   }
 
   render () {
@@ -46,6 +64,24 @@ class App extends React.Component {
       <h1>Github Fetcher</h1>
       <RepoList repos={this.state.repos}/>
       <Search onSearch={this.search.bind(this)}/>
+
+      <table>
+      <tbody>
+          <tr>
+            <th>Id</th>
+            <th>Owner</th>
+            <th>Repo Name</th>
+            <th>Forks Count</th>
+            <th> Created At </th>
+            <th> Pushed At </th>
+            <th> Default Branch </th>
+            <th>Size</th>
+          </tr>   
+        {this.createList()}
+      </tbody>
+      </table>
+
+
     </div>)
   }
 }

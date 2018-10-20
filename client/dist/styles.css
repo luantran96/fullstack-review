@@ -1,0 +1,17 @@
+
+table {
+
+	margin: 20px auto;
+}
+
+tr, th {
+	padding-bottom: 5px;
+	width: 12.5%;
+    border: 1px solid #dddddd;
+	text-align: left;
+}
+
+
+td {	
+	text-align: left;
+}

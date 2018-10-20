@@ -15,11 +15,11 @@ app.post('/repos', function (req, res) {
   // and get the repo information from the github API, then
   // save the repo information in the database
 
-  console.log(req.body);
   const {term} = req.body;
 
-  github.getReposByUsername(term, (userInfo) => {
-  	db.save(userInfo);
+  github.getReposByUsername(term, (repos) => {
+  	console.log('repoInfo: \n\n',repos);
+  	db.save(repos);
   });
 
   res.end('OK');
@@ -40,7 +40,6 @@ app.listen(port, function() {
 });
 
 app.get('/reset', function (req, res) {
-
 	db.reset();
 	res.end('Reset db');
 });
