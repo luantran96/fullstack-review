@@ -33,8 +33,7 @@ let getReposByUsername = (term, cb) => {
           'Authorization': `token ${config.TOKEN}`
         }     
       }, (err, res, body) => {
-
-        cb(JSON.parse(body));
+          cb(JSON.parse(body));
       });
 
     } else {

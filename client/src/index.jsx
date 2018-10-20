@@ -9,7 +9,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      repos: []
+      repos: [],
+      length: 0
     }
 
     this.fetchData = this.fetchData.bind(this);
@@ -26,7 +27,8 @@ class App extends React.Component {
     .done( (res) => {
       console.log('res in get /repos:\n\n',res);
         this.setState({
-          repos: res
+          repos: res.repos,
+          length: res.length
         });
     });
   }
@@ -43,10 +45,8 @@ class App extends React.Component {
       contentType: 'application/json',
       data: JSON.stringify({ term: term})
     })
-    .then ((res) => {
+    .then ( (res) => {
       console.log(res);
-
-
       this.fetchData();
     });
   }
@@ -64,7 +64,7 @@ class App extends React.Component {
   render () {
     return (<div>
       <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos}/>
+      <RepoList length={this.state.length}/>
       <Search onSearch={this.search.bind(this)}/>
 
       <table>

@@ -26,37 +26,24 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (repos) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
+let save = (repos, cb) => {
 
-  console.log('repos in save:', repos); 
-
-  let reposList = [];
+  //console.log('repos in save:', repos); 
 
   repos.forEach( (repo) => {
-
     let {id, name, created_at, pushed_at, size, forks_count, default_branch} = repo;
     let repo_html_url = repo.html_url;
-
     let {login, html_url} = repo.owner;
-
-    //let currentRepo = new Repo( {login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url});
-
-    Repo.find({id}, (err, results) => {
-      if (!results.length) {
-
-        // currentRepo.save( (err, currentRepo) => {
-        // if (err) throw (err);
-        // }); 
-
+    Repo.findOne({id}, (err, repo) => {
+      if (!repo) {
         Repo.create({login, id, name, created_at, pushed_at, size, forks_count, default_branch, html_url, repo_html_url}, (err, currentRepo) =>{
+          console.log('currentRepo:\n',currentRepo);
           if (err) throw err;
         });
-
       }
     });
+
+    cb();
 
    });
 }
@@ -66,10 +53,16 @@ let fetch = (cb) => {
   .limit(25)
   .sort('-size')  // or .sort({size: -1})
   .exec( (err, repos) => {
+    if (err) throw err;
     console.log('repos in fetch:',repos);
     cb(repos);
   });
+}
 
+let fetchAll = (cb) => {
+  Repo.find({}, (err, repos) =>{
+    cb(repos.length);
+  });
 }
 
 let reset = () => {
@@ -81,4 +74,5 @@ let reset = () => {
 
 module.exports.save = save;
 module.exports.fetch = fetch;
+module.exports.fetchAll = fetchAll;
 module.exports.reset = reset;

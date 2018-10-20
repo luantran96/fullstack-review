@@ -19,18 +19,25 @@ app.post('/repos', function (req, res) {
 
   github.getReposByUsername(term, (repos) => {
   	console.log('repoInfo: \n\n',repos);
-  	db.save(repos);
+  	db.save(repos, () =>{
+      res.end('OK');
+    });
   });
 
-  res.end('OK');
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
-	db.fetch((users) => {
- 		 res.json(users);
+	db.fetch((repos) => {
+    db.fetchAll( (length) => {
+      res.json({repos, length});
+    });
  	});
+});
+
+app.get('/allRepos', function (req, res) {
+  db.fetchAll((repos_length) => {
+     res.json(repos_length);
+  });
 });
 
 let port = 1128;
